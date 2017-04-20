@@ -78,6 +78,17 @@ class ScoutnetApi {
     }
 
     /**
+     * We want to use curl, so we need to set it in the api
+     *
+     * @param string $curlProxyServer
+     * @param string $curlProxyTunnel
+     * @param string $curlProxyUserPass
+     */
+    public function setUseCurl($curlProxyServer = null, $curlProxyTunnel = null, $curlProxyUserPass = null){
+        $this->SN->setUseCurl($curlProxyServer, $curlProxyTunnel, $curlProxyUserPass);
+    }
+
+    /**
      * Use this function to set the Parameter to be able to use the write API (if not set in the constructor)
      *
      * @param string $login_url
