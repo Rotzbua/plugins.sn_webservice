@@ -21,6 +21,8 @@ namespace ScoutNet\Api;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use ScoutNet\Api\Exceptions\ScoutNetException;
+use ScoutNet\Api\Exceptions\ScoutNetExceptionMissingConfVar;
 use ScoutNet\Api\Helpers\CacheHelper;
 use ScoutNet\Api\Helpers\ConverterHelper;
 
@@ -83,7 +85,7 @@ class ScoutnetApi {
      * @param string $aes_key
      * @param string $aes_iv
      *
-     * @throws ScoutnetException_MissingConfVar
+     * @throws \ScoutNet\Api\Exceptions\ScoutnetExceptionMissingConfVar
      */
     public function set_scoutnet_connect_data($login_url = null, $provider = '', $aes_key = '', $aes_iv = '') {
         if ($login_url == null) {
@@ -105,20 +107,20 @@ class ScoutnetApi {
     /**
      * checks if ScoutNet connect Values are set correctly
      *
-     * @throws ScoutnetException_MissingConfVar
+     * @throws \ScoutNet\Api\Exceptions\ScoutnetExceptionMissingConfVar
      */
     private function _check_for_all_configValues() {
         if (trim($this->aes_key) == '' || strlen($this->aes_key) != 32) {
-            throw new ScoutnetException_MissingConfVar('aes_key');
+            throw new ScoutnetExceptionMissingConfVar('aes_key');
         }
         if (trim($this->aes_iv) == '' || strlen($this->aes_iv) != 16) {
-            throw new ScoutnetException_MissingConfVar('aes_iv');
+            throw new ScoutnetExceptionMissingConfVar('aes_iv');
         }
         if (trim($this->login_url) == '') {
-            throw new ScoutnetException_MissingConfVar('login_url');
+            throw new ScoutnetExceptionMissingConfVar('login_url');
         }
         if (trim($this->provider) == '') {
-            throw new ScoutnetException_MissingConfVar('provider');
+            throw new ScoutnetExceptionMissingConfVar('provider');
         }
     }
 
@@ -129,10 +131,10 @@ class ScoutnetApi {
 
     private function _check_login() {
         if (trim($this->api_user) == '') {
-            throw new ScoutnetException_MissingConfVar('api_user', self::ERROR_MISSING_API_USER);
+            throw new ScoutNetExceptionMissingConfVar('api_user', self::ERROR_MISSING_API_USER);
         }
         if (trim($this->api_key) == '' || strlen($this->api_key) != 32) {
-            throw new ScoutnetException_MissingConfVar('api_key', self::ERROR_MISSING_API_KEY);
+            throw new ScoutnetExceptionMissingConfVar('api_key', self::ERROR_MISSING_API_KEY);
         }
     }
 
@@ -351,7 +353,7 @@ class ScoutnetApi {
      * Extract the Api key from _GET variables. This Function is used in after the ScoutNet Connect Login.
      *
      * @return string[]|bool
-     * @throws \ScoutNet\Api\ScoutnetException
+     * @throws \ScoutNet\Api\Exceptions\ScoutnetException
      */
     public function getApiKeyFromData() {
         // we already extracted the Data so do not do it twice
@@ -401,7 +403,7 @@ class ScoutnetApi {
         $your_domain = $this->provider;
 
         if ($data['your_domain'] !== $your_domain)
-            throw new ScoutnetException('AUTH for wrong provider', self::ERROR_WRONG_PROVIDER);
+            throw new ScoutNetException('AUTH for wrong provider', self::ERROR_WRONG_PROVIDER);
 
         $this->snData = $data;
 
@@ -414,7 +416,6 @@ class ScoutnetApi {
      * @param string $checkValue Value to sign with Api Key
      *
      * @return string
-     * @throws ScoutnetException_MissingConfVar
      */
     private function _generate_auth($checkValue) {
         $this->_check_login();
@@ -437,14 +438,5 @@ class ScoutnetApi {
 
         return strtr(base64_encode($aes->encrypt($first_block . $auth)), '+/=', '-_~');
     }
-
 }
 
-class ScoutnetException extends \Exception {
-}
-
-class ScoutnetException_MissingConfVar extends ScoutnetException {
-    public function __construct($var, $code = null) {
-        parent::__construct("Missing '$var'. Please Contact your Admin to enter a valid credentials for ScoutNet Connect. You can request them via <a href=\"mailto:scoutnetconnect@scoutnet.de\">scoutnetConnect@ScoutNet.de</a>.", $code);
-    }
-}

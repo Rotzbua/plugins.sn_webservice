@@ -21,6 +21,7 @@ namespace ScoutNet\Api\Tests;
  ***************************************************************/
 
 use PHPUnit\Framework\TestCase;
+use ScoutNet\Api\Exceptions\ScoutNetExceptionMissingConfVar;
 use ScoutNet\Api\Helpers\JsonRPCClientHelper;
 use \Exception;
 use ScoutNet\Api\Helpers\AesHelper;
@@ -30,11 +31,11 @@ use ScoutNet\Api\Models\Permission;
 use ScoutNet\Api\Models\Structure;
 use ScoutNet\Api\Models\User;
 use ScoutNet\Api\ScoutnetApi;
-use ScoutNet\Api\ScoutnetException_MissingConfVar;
 
 /**
  * @covers \ScoutNet\Api\ScoutnetApi
- * @covers \ScoutNet\Api\ScoutnetException_MissingConfVar
+ * @covers \ScoutNet\Api\Exceptions\ScoutNetExceptionMissingConfVar
+ * @covers \ScoutNet\Api\Exceptions\ScoutNetException
  */
 final class ApiTest extends TestCase {
     const AES_KEY = "12345678901234567890123456789012";
@@ -138,14 +139,14 @@ final class ApiTest extends TestCase {
 
 
     public function testException() {
-        $ext = new ScoutnetException_MissingConfVar('test', 23);
+        $ext = new ScoutNetExceptionMissingConfVar('test', 23);
 
         $this->assertEquals(23, $ext->getCode());
         $this->assertEquals("Missing 'test'. Please Contact your Admin to enter a valid credentials for ScoutNet Connect. You can request them via <a href=\"mailto:scoutnetconnect@scoutnet.de\">scoutnetConnect@ScoutNet.de</a>.", $ext->getMessage());
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException_MissingConfVar
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetExceptionMissingConfVar
      * @expectedExceptionMessageRegExp /^Missing 'aes_key'.*$/
      */
     public function testSetScoutnetConnectDataFailureAES_KEY() {
@@ -153,7 +154,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException_MissingConfVar
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetExceptionMissingConfVar
      * @expectedExceptionMessageRegExp /^Missing 'aes_iv'.*$/
      */
     public function testSetScoutnetConnectDataFailureAES_IV() {
@@ -161,7 +162,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException_MissingConfVar
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetExceptionMissingConfVar
      * @expectedExceptionMessageRegExp /^Missing 'provider'.*$/
      */
     public function testSetScoutnetConnectDataFailiureProvider() {
@@ -169,7 +170,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException_MissingConfVar
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetExceptionMissingConfVar
      * @expectedExceptionMessageRegExp /^Missing 'login_url'.*$/
      */
     public function testSetScoutnetConnectDataFailiureLoginurl() {
@@ -197,7 +198,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException_MissingConfVar
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetExceptionMissingConfVar
      * @expectedExceptionCode 1492695814
      */
     public function testSetLoginDetailsUserEmpty() {
@@ -210,7 +211,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException_MissingConfVar
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetExceptionMissingConfVar
      * @expectedExceptionCode 1491938183
      */
     public function testSetLoginDetailsApiKeyEmpty() {
@@ -223,7 +224,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException_MissingConfVar
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetExceptionMissingConfVar
      * @expectedExceptionCode 1491938183
      */
     public function testSetLoginDetailsApiKeyWrongLength() {
@@ -245,7 +246,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException_MissingConfVar
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetExceptionMissingConfVar
      * @expectedExceptionCode 1491938183
      */
     public function testGenerateAuthWithoutApiKey() {
@@ -280,7 +281,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetException
      * @expectedExceptionMessageRegExp /^AUTH is empty$/
      */
     public function testGetApiKeyFromDataWithEmptyAuth() {
@@ -292,7 +293,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetException
      * @expectedExceptionMessageRegExp /^Could not verify AUTH$/
      */
     public function testGetApiKeyFromDataWithBrokenMd5() {
@@ -304,7 +305,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetException
      * @expectedExceptionMessageRegExp /^Could not verify AUTH$/
      */
     public function testGetApiKeyFromDataWithBrokenSha1() {
@@ -316,7 +317,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetException
      * @expectedExceptionMessageRegExp /^AUTH is too old$/
      */
     public function testGetApiKeyFromDataWithExpiredTime() {
@@ -328,7 +329,7 @@ final class ApiTest extends TestCase {
     }
 
     /**
-     * @expectedException \ScoutNet\Api\ScoutnetException
+     * @expectedException \ScoutNet\Api\Exceptions\ScoutnetException
      * @expectedExceptionMessageRegExp /^AUTH for wrong provider$/
      */
     public function testGetApiKeyFromDataWithWrongProvider() {
