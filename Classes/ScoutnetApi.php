@@ -249,7 +249,7 @@ class ScoutnetApi {
      * @return mixed
      */
     public function write_object($type, $id, $data) {
-        $auth = $this->_generate_auth($type . $id . serialize($data) . $this->api_user);
+        $auth = $this->_generate_auth($type . $id . json_encode($data) . $this->api_user);
 
         return $this->SN->setData($type, $id, $data, $this->api_user, $auth);
     }
