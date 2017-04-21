@@ -155,7 +155,7 @@ class ScoutnetApi {
      *
      * @return mixed
      */
-    protected function load_data_from_scoutnet($ids, $query) {
+    public function load_data_from_scoutnet($ids, $query) {
         $res = $this->SN->get_data_by_global_id($ids, $query);
 
         return $res;
